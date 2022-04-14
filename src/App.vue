@@ -1,26 +1,48 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png">
-  <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <div>
+    <vagas-favoritas></vagas-favoritas>
+    <topo-padrao @navegar="componente = $event" />
+    <alerta v-if="exibirAlerta" :tipo="alerta.tipo">
+      <template v-slot:titulo>
+        <p><strong>{{ alerta.titulo }}</strong></p>
+      </template>
+    </alerta>
+    <conteudo v-if="visibilidade" :conteudo="componente"></conteudo>
+  </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import Alerta from '@/components/comuns/Alerta.vue'
+import Conteudo from '@/components/layouts/Conteudo.vue'
+import TopoPadrao from '@/components/layouts/TopoPadrao.vue'
+import VagasFavoritas from '@/components/comuns/VagasFavoritas.vue'
 
 export default {
   name: 'App',
+  data: () => ({
+    visibilidade: true,
+    componente: 'Home',
+    exibirAlerta: false,
+    alerta: { titulo: '', tipo: ''}
+  }),
   components: {
-    HelloWorld
+    Conteudo,
+    TopoPadrao,
+    VagasFavoritas,
+    Alerta
+  },
+  mounted() {
+    this.emitter.on('alerta', (a) => {
+      this.alerta = a
+      this.exibirAlerta = true
+      setTimeout(() => this.exibirAlerta = false, 3200)
+    })
   }
 }
 </script>
 
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+<style scoped>
+p {
+    margin: 0;
 }
 </style>
